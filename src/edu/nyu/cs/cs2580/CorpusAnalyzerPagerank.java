@@ -1,6 +1,10 @@
 package edu.nyu.cs.cs2580;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,6 +97,53 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 	@Override
 	public void compute() throws IOException {
 		System.out.println("Computing using " + this.getClass().getName());
+		String file = "graph.tsv";
+
+		int docNum = 100;
+		int itrNum = 1; // iteration number, try itrNum = 1 and 2
+		Double lambda = 0.1; //try lambda = 0.1 and 0.9
+		Double[] prev = new Double[docNum];
+		Double[] next = new Double[docNum];
+		
+		//initialize prev to 1/docNum
+		for(int i = 0; i < prev.length; i++){
+			prev[i] = 1.0/docNum;
+		}
+
+		for(int itr = 0; itr < itrNum; itr++){
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			String line = br.readLine();
+		
+			// next = G*prev
+			while(line != null){
+				line = br.readLine();
+				String[] strArr = line.split(" ");
+				int docId = Integer.parseInt(strArr[0]);
+				int adjNum = strArr.length - 1;
+				for(int i = 1; i < strArr.length; i++){
+					int adjId = Integer.parseInt(strArr[i]);
+					next[adjId] += prev[docId]*(1.0/adjNum);
+				}
+			}
+			br.close();
+		
+			// next = lambda*next + (1-lambda)*prev
+			for(int i = 0; i < next.length; i++){
+				next[i] = lambda*next[i] + (1-lambda)*prev[i];
+			}
+		
+			prev = next;
+			next = new Double[docNum];
+		}
+		
+		//write prev to file, it is distribution
+		String rfile = "pageRank.tsv";
+		BufferedWriter bw = new BufferedWriter(new FileWriter(rfile, true));
+		for(int i = 0; i < prev.length; i++){
+			bw.write(Double.toString(prev[i]));
+		}
+		bw.close();
+		
 		return;
 	}
 
