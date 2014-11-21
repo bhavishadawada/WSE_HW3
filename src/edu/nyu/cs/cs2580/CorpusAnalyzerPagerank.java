@@ -66,7 +66,7 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		int docId = 0; 
 		File folder = new File(_options._corpusPrefix);
 		for (final File fileEntry : folder.listFiles()){
-			_docList.put(fileEntry.getName(), ++docId);
+			_docList.put(fileEntry.getName(), docId++);
 		}
 	}
 
@@ -161,7 +161,7 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 			while((line = br.readLine()) != null){
 				String[] strArr = line.split(" ");
 				int docId = Integer.parseInt(strArr[0]);
-				int adjNum = strArr.length - 1;
+				double adjNum = strArr.length - 1;
 				for(int i = 1; i < strArr.length; i++){
 					int adjId = Integer.parseInt(strArr[i]);
 					next[adjId] += prev[docId]*(1.0/adjNum);

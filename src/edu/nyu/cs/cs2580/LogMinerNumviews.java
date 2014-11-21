@@ -12,6 +12,8 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.math.NumberUtils;
+
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
 /**
@@ -63,13 +65,14 @@ public class LogMinerNumviews extends LogMiner {
 		// Delete all file before creating the _graph
 		File file =  new File(_options._indexPrefix + "/numViews.txt");
 		file.delete();
+		createDocumentList();
 		File folder = new File(_options._logPrefix);
 		File logFile = folder.listFiles()[0];
 		BufferedReader br = new BufferedReader(new FileReader(logFile));
 		String currentLine = null;
 		while((currentLine = br.readLine()) != null){
 			String[] temp = currentLine.split(" ");
-			if(_docList.get(temp[1]) != null){
+			if((_docList.get(temp[1]) != null) && NumberUtils.isNumber(temp[2])){
 				_numViews.put(_docList.get(temp[1]), Integer.parseInt(temp[2]));
 			}
 
