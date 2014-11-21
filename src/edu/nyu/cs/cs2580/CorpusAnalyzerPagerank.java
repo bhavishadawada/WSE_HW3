@@ -74,6 +74,10 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		System.out.println("Preparing " + this.getClass().getName());
 		long startTime = System.nanoTime();
 		createDocumentList();
+		
+		// Delete all file before creating the _graph
+		File file =  new File(_options._indexPrefix + "/corpusGraph.txt");
+		file.delete();
 		//System.out.println(_docList.size());
 		File folder = new File(_options._corpusPrefix);
 		for (final File fileEntry : folder.listFiles()) {
@@ -100,7 +104,9 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 			_graph.clear();
 		}
 		long endTime = System.nanoTime();
-		System.out.println("Took prepare"+(endTime - startTime) + " ns");
+
+		System.out.println("Took Prepare"+(endTime - startTime)/1000000000.0 + " s");
+
 	}
 
 	// To write the partial graph to the file
@@ -109,12 +115,15 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		File file = new File(path);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
 		for(List adjacencyList : _graph){
+			
+			// String util to convert a iterable to String with delimiter
 			String tempString = StringUtils.join(adjacencyList, " ");
 			writer.write(tempString + "\n");	
 		}
 		
 		writer.close();
 	}
+	
 
 	/**
 	 * This function computes the PageRank based on the internal graph generated
