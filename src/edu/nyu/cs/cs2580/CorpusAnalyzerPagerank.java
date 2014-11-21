@@ -1,11 +1,16 @@
 package edu.nyu.cs.cs2580;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
@@ -18,15 +23,15 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 
 	// To write partial graphs to file
 	final int BULK_DOC_PROCESSING_SIZE = 1000;
-	
+
 	// Map to maintain documents in memory
 	private Map<String, Integer> _docList = new HashMap<String, Integer>();
-	
+
 	// To store the adjacency List
 	private List<ArrayList<Integer>> _graph = new ArrayList<ArrayList<Integer>>();
-	private DocProcessor dp = new DocProcessor(_options._corpusPrefix); 
+	//private DocProcessor dp = new DocProcessor(_options._corpusPrefix); 
 
-	
+
 	public CorpusAnalyzerPagerank(Options options) {
 		super(options);
 	}
@@ -51,30 +56,62 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 	 *
 	 * @throws IOException
 	 */
-	
+
 	// This will create docList in memory during mining mode
 	// check if index is the right 
 	private void createDocumentList() throws FileNotFoundException{
-		while(dp.hasNextDoc()){
-			dp.nextDoc();
-			_docList.put(dp.title, dp.index);
+		int docId = 0; 
+		File folder = new File(_options._corpusPrefix);
+		for (final File fileEntry : folder.listFiles()){
+			_docList.put(fileEntry.getName(), ++docId);
 		}
 	}
-	
+
 	@Override
 	public void prepare() throws IOException {
 		System.out.println("Preparing " + this.getClass().getName());
-		while(dp.hasNextDoc()){
-			dp.nextDoc();
-			// extract the link and keep adding to _graph
-		
-		}
+		long startTime = System.nanoTime();
+		createDocumentList();
+		//System.out.println(_docList.size());
+		File folder = new File(_options._corpusPrefix);
+		for (final File fileEntry : folder.listFiles()) {
+			HeuristicLinkExtractor extractor = new HeuristicLinkExtractor(fileEntry);
+			//System.out.println(extractor.getLinkSource());
+			ArrayList<Integer> adjacencyList = new ArrayList<Integer>();
+			String LinkSource = extractor.getLinkSource();
+			adjacencyList.add(_docList.get(LinkSource));
+			while(extractor.getNextInCorpusLinkTarget() != null){
+				String linkTarget = extractor.getNextInCorpusLinkTarget();
+				if(_docList.get(linkTarget) != null){
+					adjacencyList.add(_docList.get(linkTarget));
+				}}
 
+			_graph.add(adjacencyList);
+			if(_graph.size() == BULK_DOC_PROCESSING_SIZE ){
+				writeFile(_graph);
+				_graph.clear();
+			}
+		}
+		
+		if(!_graph.isEmpty()){
+			writeFile(_graph);
+			_graph.clear();
+		}
+		long endTime = System.nanoTime();
+		System.out.println("Took "+(endTime - startTime) + " ns");
 	}
-	
+
 	// To write the partial graph to the file
 	private void writeFile(List<ArrayList<Integer>> _grah) throws IOException{
-
+		String path = _options._indexPrefix + "/corpusGraph.txt";
+		File file = new File(path);
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+		for(List adjacencyList : _graph){
+			String tempString = StringUtils.join(adjacencyList, " ");
+			writer.write(tempString + "\n");	
+		}
+		
+		writer.close();
 	}
 
 	/**
