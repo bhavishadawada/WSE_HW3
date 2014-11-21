@@ -93,8 +93,10 @@ public class LogMinerNumviews extends LogMiner {
 		File file = new File(path);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
 		for(Integer key : _numViews.keySet()){
-			writer.write(key + " " + _numViews.get(key) + \n"");
+			writer.write(key + " " + _numViews.get(key) + "\n");
 		}
+		
+		writer.close();
 	}
 
 	/**

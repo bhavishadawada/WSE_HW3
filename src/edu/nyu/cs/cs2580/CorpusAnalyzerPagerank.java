@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,24 +144,21 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		System.out.println("Computing using " + this.getClass().getName());
 		String file = _options._indexPrefix + "/corpusGraph.txt";
 
-		int docNum = _docList.size();
+		double docNum = _docList.size();
 		int itrNum = 1; // iteration number, try itrNum = 1 and 2
-		Double lambda = 0.1; //try lambda = 0.1 and 0.9
-		Double[] prev = new Double[docNum];
-		Double[] next = new Double[docNum];
-		
+		double lambda = 0.1; //try lambda = 0.1 and 0.9
+		double[] prev = new double[(int) docNum];
+		double[] next = new double[(int) docNum];
+		System.out.println(1/docNum);
 		//initialize prev to 1/docNum
-		for(int i = 0; i < prev.length; i++){
-			prev[i] = 1.0/docNum;
-		}
+		Arrays.fill(prev, 1/docNum);
 
 		for(int itr = 0; itr < itrNum; itr++){
 			BufferedReader br = new BufferedReader(new FileReader(file));
-			String line = br.readLine();
+			String line = null;
 		
 			// next = G*prev
-			while(line != null){
-				line = br.readLine();
+			while((line = br.readLine()) != null){
 				String[] strArr = line.split(" ");
 				int docId = Integer.parseInt(strArr[0]);
 				int adjNum = strArr.length - 1;
@@ -177,11 +175,11 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 			}
 		
 			prev = next;
-			next = new Double[docNum];
+			next = new double[(int) docNum];
 		}
 		
 		//write prev to file, it is distribution
-		String rfile = _options._indexPrefix + "pageRank.tsv";
+		String rfile = _options._indexPrefix + "pageRank.txt";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(rfile, true));
 		for(int i = 0; i < prev.length; i++){
 			bw.write(Double.toString(prev[i]));
