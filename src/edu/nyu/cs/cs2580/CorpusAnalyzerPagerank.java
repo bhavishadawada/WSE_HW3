@@ -106,7 +106,7 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		}
 		long endTime = System.nanoTime();
 
-		System.out.println("Took Prepare"+(endTime - startTime)/1000000000.0 + " s");
+		System.out.println("Took prepare() "+(endTime - startTime)/1000000000.0 + " s");
 
 	}
 
@@ -142,6 +142,7 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 	@Override
 	public void compute() throws IOException {
 		System.out.println("Computing using " + this.getClass().getName());
+		long startTime = System.nanoTime();
 		String file = _options._indexPrefix + "/corpusGraph.txt";
 
 		double docNum = _docList.size();
@@ -179,13 +180,15 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		}
 		
 		//write prev to file, it is distribution
-		String rfile = _options._indexPrefix + "pageRank.txt";
+		String rfile = _options._indexPrefix + "/pageRank.txt";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(rfile, true));
 		for(int i = 0; i < prev.length; i++){
-			bw.write(Double.toString(prev[i]));
+			bw.write(i + " " + Double.toString(prev[i])+"\n");
 		}
 		bw.close();
-		
+
+		long endTime = System.nanoTime();
+		System.out.println("Took compute() "+(endTime - startTime)/1000000000.0 + " s");
 		return;
 	}
 
