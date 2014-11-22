@@ -16,27 +16,31 @@ class Spearman{
 		System.out.println(pageRankPath);
 		System.out.println(numViewPath);
 
-		int docNum = 10;
-		Doc[] pageRank = genDoc(pageRankPath, docNum);
-		Doc[] numView  = genDoc(numViewPath, docNum);
+		Doc[] pageRank = genDoc(pageRankPath);
+		Doc[] numView  = genDoc(numViewPath);
 		System.out.println(cmpDoc(numView, pageRank));
 	}
 
-	static public Doc[] genDoc(String path, int docNum ) throws Exception{
+	static public Doc[] genDoc(String path) throws Exception{
+		File file = new File(path);
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		String line = br.readLine();
+
+		int docNum = Integer.parseInt(line);
+		System.out.println("docNum: " + docNum);
 		
 		// set docId
 		Doc[] docLs = new Doc[docNum];
 		for(int i = 0; i < docNum; i++){
-			docLs[i].docId= i;
+			docLs[i] = new Doc();
+			docLs[i].docId = i;
 		}
 		
 		// read score, line: <docId> <score>
-		File file = new File(path);
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		String line;
 		while((line = br.readLine()) != null){
 			String[] arr = line.split(" ");
 			int docId = Integer.parseInt(arr[0]);
+			System.out.println("docId: " + docId);
 			docLs[docId].score = Double.parseDouble(arr[1]);
 		}
 		br.close();

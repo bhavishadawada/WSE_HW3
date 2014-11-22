@@ -178,12 +178,12 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 			next = new double[(int) docNum];
 		}
 		
-		String rfile = _options._indexPrefix + "/pageRank.txt";
+		File rfile = new File(_options._indexPrefix + "/pageRank.txt");
+		rfile.delete();
 		BufferedWriter bw = new BufferedWriter(new FileWriter(rfile, true));
 
 		// Write document number at the first line
 		bw.write(_docList.size() + "\n");
-		bw.close();
 
 		//write prev to file, it is page rank 
 		for(int i = 0; i < prev.length; i++){

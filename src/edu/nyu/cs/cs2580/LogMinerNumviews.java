@@ -54,7 +54,7 @@ public class LogMinerNumviews extends LogMiner {
 		int docId = 0; 
 		File folder = new File(_options._corpusPrefix);
 		for (final File fileEntry : folder.listFiles()){
-			_docList.put(fileEntry.getName(), ++docId);
+			_docList.put(fileEntry.getName(), docId++);
 		}
 	}
 
