@@ -13,8 +13,6 @@ class Spearman{
 	static public void main(String[] args) throws Exception{
 		String pageRankPath = args[0];
 		String numViewPath = args[1];
-		System.out.println(pageRankPath);
-		System.out.println(numViewPath);
 
 		Doc[] pageRank = genDoc(pageRankPath);
 		Doc[] numView  = genDoc(numViewPath);
@@ -27,7 +25,6 @@ class Spearman{
 		String line = br.readLine();
 
 		int docNum = Integer.parseInt(line);
-		System.out.println("docNum: " + docNum);
 		
 		// set docId
 		Doc[] docLs = new Doc[docNum];
@@ -40,7 +37,6 @@ class Spearman{
 		while((line = br.readLine()) != null){
 			String[] arr = line.split(" ");
 			int docId = Integer.parseInt(arr[0]);
-			System.out.println("docId: " + docId);
 			docLs[docId].score = Double.parseDouble(arr[1]);
 		}
 		br.close();
@@ -51,12 +47,26 @@ class Spearman{
 		
 		// assign rank according to the score sorting order
 		for(int i = 0; i < docLs.length; i++){
-			docLs[i].rank = i;
+			docLs[i].rank = i+1; // rank starts from 1
 		}
+
+		/*
+		System.out.println("sort according to score");
+		for(int i = 0; i < docLs.length; i++){
+			System.out.println(docLs[i].docId + " " +docLs[i].score + " " + docLs[i].rank);
+		}
+		*/
 		
 		// sort docLs according to docId
 		DocIdComparator dc = new DocIdComparator();
 		Arrays.sort(docLs, 0, docLs.length, dc);
+
+		/*
+		System.out.println("sort according to docId");
+		for(int i = 0; i < docLs.length; i++){
+			System.out.println(docLs[i].docId + " " +docLs[i].score + " " + docLs[i].rank);
+		}
+		*/
 
 		return docLs;
 	}
@@ -72,7 +82,7 @@ class Spearman{
 			tho += (doc0[i].rank - z)*(doc1[i].rank - z);
 			w += Math.pow((doc0[i].rank - z), 2);
 		}
-		return tho/(w*w);
+		return tho/w;
 	}
 }
 class Doc{
