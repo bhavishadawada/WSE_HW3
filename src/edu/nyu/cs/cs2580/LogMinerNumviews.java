@@ -65,7 +65,14 @@ public class LogMinerNumviews extends LogMiner {
 		// Delete all file before creating the _graph
 		File file =  new File(_options._indexPrefix + "/numViews.txt");
 		file.delete();
+
 		createDocumentList();
+
+		// Write document number at the first line
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+		bw.write(_docList.size() + "\n");
+		bw.close();
+
 		File folder = new File(_options._logPrefix);
 		File logFile = folder.listFiles()[0];
 		BufferedReader br = new BufferedReader(new FileReader(logFile));
@@ -80,8 +87,8 @@ public class LogMinerNumviews extends LogMiner {
 				writeFile(_numViews);
 				_numViews.clear();
 			}
-
 		}
+		br.close();
 
 		if(!_numViews.isEmpty()){
 			writeFile(_numViews);

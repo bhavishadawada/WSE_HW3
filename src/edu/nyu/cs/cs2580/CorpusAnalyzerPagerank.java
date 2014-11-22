@@ -116,7 +116,6 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		File file = new File(path);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
 		for(List adjacencyList : _graph){
-			
 			// String util to convert a iterable to String with delimiter
 			String tempString = StringUtils.join(adjacencyList, " ");
 			writer.write(tempString + "\n");	
@@ -179,9 +178,14 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 			next = new double[(int) docNum];
 		}
 		
-		//write prev to file, it is distribution
 		String rfile = _options._indexPrefix + "/pageRank.txt";
 		BufferedWriter bw = new BufferedWriter(new FileWriter(rfile, true));
+
+		// Write document number at the first line
+		bw.write(_docList.size() + "\n");
+		bw.close();
+
+		//write prev to file, it is page rank 
 		for(int i = 0; i < prev.length; i++){
 			bw.write(i + " " + Double.toString(prev[i])+"\n");
 		}
