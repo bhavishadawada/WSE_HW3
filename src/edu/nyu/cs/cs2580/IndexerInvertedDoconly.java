@@ -149,6 +149,8 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 		}
 
 		List<String> bodyTermVector = Utility.tokenize2(body);
+		doc.termId = new int[uniqueTermSetBody.size()];
+		doc.termFrequency = new int[uniqueTermSetBody.size()];
 		for(String token : bodyTermVector){
 			int id = _dictionary.get(token);
 			_corpusTermFrequency.set(id, _corpusTermFrequency.get(id) + 1);
@@ -181,8 +183,10 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 		
 		int indexNum = 0;
 		for(Entry<Integer,Integer> entry : entries){
-			doc.termId[indexNum] = entry.getKey();
-			doc.termFrequency[indexNum] = entry.getValue();
+			System.out.println(entry.getKey());
+			System.out.println(entry.getValue());
+			doc.termId[indexNum] = entry.getKey().intValue();
+			doc.termFrequency[indexNum] = entry.getValue().intValue();
 			indexNum = indexNum + 1;
 		}	
 
