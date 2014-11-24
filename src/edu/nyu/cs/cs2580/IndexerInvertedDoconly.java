@@ -361,6 +361,7 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 
 		this._documents = loaded._documents;
 		this._dictionary = loaded._dictionary;
+		this._termLs = loaded._termLs;
 		this._numDocs = _documents.size();
 		this._corpusTermFrequency = loaded._corpusTermFrequency;
 		this._documentTermFrequency = loaded._documentTermFrequency;
