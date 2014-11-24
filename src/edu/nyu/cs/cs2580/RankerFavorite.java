@@ -26,31 +26,6 @@ public class RankerFavorite extends Ranker {
       super(options, arguments, indexer);
       System.out.println("Using Ranker: " + this.getClass().getSimpleName());
     }
-
-    @Override
-    public Vector<ScoredDocument> runQuery(QueryPhrase query, int numResults) {
-    	Queue<ScoredDocument> rankQueue = new PriorityQueue<ScoredDocument>();
-
-		int docid = -1;
-		Document doc = _indexer.nextDoc(query, docid);
-		while(doc != null){
-			rankQueue.add(runquery(query, doc));
-			if(rankQueue.size() > numResults){
-				rankQueue.poll();
-			}
-			docid = doc._docid;
-			doc = _indexer.nextDoc(query, docid);
-		}
-		
-        Vector<ScoredDocument> results = new Vector<ScoredDocument>();
-        ScoredDocument scoredDoc = null;
-        while ((scoredDoc = rankQueue.poll()) != null) {
-          results.add(scoredDoc);
-        }
-        Collections.sort(results, Collections.reverseOrder());
-        System.out.println("results size:" + results.size());
-		return results;
-    }
     
 	public ScoredDocument runquery(Query query, Document doc){
 		// you will be implementing score fuctions here - Q1 

@@ -1,9 +1,13 @@
 package edu.nyu.cs.cs2580;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Vector;
+
+import org.apache.commons.collections.map.HashedMap;
 
 import edu.nyu.cs.cs2580.QueryHandler.CgiArguments;
 import edu.nyu.cs.cs2580.SearchEngine.Options;
@@ -82,6 +86,11 @@ public abstract class Ranker {
 	  
 	  Vector<ScoredDocument> results = runQuery(query, numResults);
 	  // do the logic here
+	  
+	  Map<Integer, Integer> frequencyMap = new HashMap<Integer,Integer>();  
+	  for(ScoredDocument scoreddoc : results){
+		  
+	  }
   }
   
   public abstract ScoredDocument runquery(Query query, Document doc);
