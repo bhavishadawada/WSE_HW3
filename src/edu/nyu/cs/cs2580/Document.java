@@ -64,4 +64,5 @@ class Document implements Serializable {
   public void setNumViews(int numViews) {
     this._numViews = numViews;
   }
+  
 }
