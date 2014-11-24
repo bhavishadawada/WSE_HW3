@@ -137,5 +137,11 @@ public class Utility {
 		System.out.println(files.size());
 		return files;
 	}
+	
+	public static void main(String[] args) {
+		//String doc = "This is to test set to";
+		//tokenize(doc);
+		getFilesInDirectory("data/simple");
+	}
 }
 
