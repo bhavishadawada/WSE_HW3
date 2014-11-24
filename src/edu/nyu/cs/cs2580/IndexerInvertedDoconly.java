@@ -40,12 +40,9 @@ import edu.nyu.cs.cs2580.SearchEngine.Options;
 public class IndexerInvertedDoconly extends Indexer2 {
 	private static final long serialVersionUID = 3361289105007800861L;
 
-	final int BULK_DOC_PROCESSING_SIZE = 1000;
 
 	// Data structure to maintain unique terms with id
-	private Map<String, Integer> _dictionary = new HashMap<String, Integer>();
-	
-	ArrayList<String> _termLs2;
+
 
 	/*
 	// Data structure to store number of times a term occurs in Document
@@ -71,9 +68,7 @@ public class IndexerInvertedDoconly extends Indexer2 {
 			new HashMap<String, ArrayList<Integer>>();
 	int _postListBufSize = 1000;
 
-	double[] pageRankLs;
 
-	int[] numViewLs;
 
 	// Provided for serialization
 	public IndexerInvertedDoconly(){ }
@@ -82,129 +77,14 @@ public class IndexerInvertedDoconly extends Indexer2 {
 		super(options);
 		System.out.println("Using Indexer: " + this.getClass().getSimpleName());
 	}
-
-	@Override
-	public void constructIndex() throws IOException {
-		String corpusFile = _options._corpusPrefix;
-		System.out.println("Construct index from: " + corpusFile);
-		long startTime = System.nanoTime();
-		//delete everything in index before constructIndex
-
-		CorpusAnalyzer analyzer = new CorpusAnalyzerPagerank(_options);
-		pageRankLs = (double[]) analyzer.load();
-
-		LogMiner miner = new LogMinerNumviews(_options);
-		numViewLs = (int[]) miner.load();
-
-		deleteFile();
-		DocProcessor dp = new DocProcessor(_options._corpusPrefix);
-		while (dp.hasNextDoc()) {
-			// The problem is this will include num_views also
-			dp.nextDoc();
-			processDocument(dp.title, dp.body);
-
-			if(_numDocs % BULK_DOC_PROCESSING_SIZE == 0){
-				writeFile(_characterMap, false);
-				_characterMap.clear();
-				//writeFrequency(_corpusTermFrequency);
-				//_corpusTermFrequency.clear();
-			}
-		}
-
-		// if the documents are  < BULK_DOC_PROCESSING_SIZE
-		if (!_characterMap.isEmpty()) {
-			writeFile(_characterMap, false);
-			_characterMap.clear();
-		}
-		mergeAll();
-
-		System.out.println("_dictionary size: " + _dictionary.size());
-		String indexFile = _options._indexPrefix + "/corpus.idx";
-		System.out.println("Write Indexer to " + indexFile);
-
-		System.out.println("termLs size: " + this._termLs.size());
-		ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(indexFile));
-		this._termLs2 = this._termLs;
-		writer.writeObject(this);
-		writer.close();
-		long endTime = System.nanoTime();
-		System.out.println("Took ConstructIndex"+(endTime - startTime)/1000000000.0 + " s");
+	protected void clearCharMap(){
+		this._characterMap.clear();
+	}
+	protected boolean isEmptyCharMap(){
+		return this._characterMap.isEmpty();
 	}
 
-	private void processDocument(String title, String body) throws IOException {
-		int docId = _numDocs;
-		++ _numDocs;
-		Set<String> uniqueTermSetTitle = Utility.tokenize(title);
-		buildMapFromTokens(uniqueTermSetTitle,docId);
-		Set<String> uniqueTermSetBody = Utility.tokenize(body);
-		buildMapFromTokens(uniqueTermSetBody,docId);
-
-		DocumentIndexed doc = new DocumentIndexed(docId);
-		
-		Map<Integer,Integer> termFrequencyMap = new HashMap<Integer,Integer>();
-		//build _dictionary
-		for(String token:uniqueTermSetBody){
-			if(!_dictionary.containsKey(token)){
-				_dictionary.put(token, _corpusTermFrequency.size());
-				_corpusTermFrequency.add(0);
-				_documentTermFrequency.add(0);
-				_termLineNum.add(0);
-				_termLs.add(token);
-			}
-			int id = _dictionary.get(token);
-			_documentTermFrequency.set(id, _documentTermFrequency.get(id) + 1);
-		}
-
-		List<String> bodyTermVector = Utility.tokenize2(body);
-		doc.termId = new int[uniqueTermSetBody.size()];
-		doc.termFrequency = new int[uniqueTermSetBody.size()];
-		for(String token : bodyTermVector){
-			int id = _dictionary.get(token);
-			_corpusTermFrequency.set(id, _corpusTermFrequency.get(id) + 1);
-			
-			if(termFrequencyMap.containsKey(id)){
-				termFrequencyMap.put(id, termFrequencyMap.get(id) + 1);
-			}
-			else{
-				termFrequencyMap.put(id, 1);
-			}
-			
-		}
-		
-		// Convert the hashMap to arrayList for Sorting
-		List<Map.Entry<Integer, Integer>> entries = new ArrayList<Map.Entry<Integer, Integer>>(termFrequencyMap.entrySet());
-		Collections.sort(entries, new Comparator<Map.Entry<Integer, Integer>>() {
-			  public int compare(
-			      Map.Entry<Integer, Integer> entry1, Map.Entry<Integer, Integer> entry2) {
-				  if(entry1.getValue() > entry2.getValue()){
-					  return -1;
-				  }
-				  else if(entry1.getValue() < entry2.getValue()){
-					  return 1;
-				  }
-				  else{
-					  return 0;
-				  }
-			  }
-			});
-		
-		int indexNum = 0;
-		for(Entry<Integer,Integer> entry : entries){
-			doc.termId[indexNum] = entry.getKey().intValue();
-			doc.termFrequency[indexNum] = entry.getValue().intValue();
-			indexNum = indexNum + 1;
-		}	
-
-		doc._pageRank = (float)pageRankLs[docId];
-		doc._numViews = numViewLs[docId];
-		doc.setTitle(title);
-		doc._termNum = bodyTermVector.size();
-		doc.setUrl(Integer.toString(docId));
-		_documents.add(doc);
-
-	}
-
-	private void buildMapFromTokens(Set<String> uniqueTermSet, int docId){
+	protected void buildMapFromTokens(List<String> uniqueTermSet, int docId){
 
 		for(String token: uniqueTermSet){
 			// check how to do document frequency here
@@ -232,8 +112,11 @@ public class IndexerInvertedDoconly extends Indexer2 {
 			}
 		}
 	}
+	protected void writeFileHelper(Boolean record) throws IOException{
+		writeFile(this._characterMap, record);
+	}
 
-	private void writeFile( Map<Character, Map<String, List<Integer>>> _characterMap, Boolean record) throws IOException{
+	private void writeFile(Map<Character, Map<String, List<Integer>>> _characterMap, Boolean record) throws IOException{
 		int lineNum = 0;
 		// assign id to file names
 		for(Entry<Character, Map<String, List<Integer>>> entry : _characterMap.entrySet()){
@@ -266,31 +149,7 @@ public class IndexerInvertedDoconly extends Indexer2 {
 
 	}
 
-	private void deleteFile(){
-		String path = _options._indexPrefix + "/";
-		File dir = new File(path);
-		File[] fileLs = dir.listFiles();
-		for(File file : fileLs){
-			if(file.getName().endsWith(".idx")){
-			file.delete();
-			}
-		}
-	}
-
-	private void writeFrequency(Map<String, Integer> frequency) throws IOException{
-		String path = _options._indexPrefix + "/" + _numDocs + ".freq";
-		File file = new File(path);
-		OutputStream out = new FileOutputStream(file, true);
-		for (Map.Entry<String, Integer> entry : frequency.entrySet()) {
-			out.write(entry.getKey().getBytes());
-			out.write(" ".getBytes());
-			out.write(entry.getValue().toString().getBytes());
-			out.write("\n".getBytes());
-		}
-		out.close();
-	}
-
-	private void mergeAll() throws IOException{
+	protected void mergeAll() throws IOException{
 		List<String> files = Utility.getFilesInDirectory(_options._indexPrefix);
 		for (String file : files) {
 			if (file.endsWith(".idx")) {
@@ -354,48 +213,6 @@ public class IndexerInvertedDoconly extends Indexer2 {
 
 
 	// This is used when the SearchEngine is called with the serve option
-	@Override
-	public void loadIndex() throws IOException, ClassNotFoundException {
-		String indexFile = _options._indexPrefix + "/corpus.idx";
-		System.out.println("Load index from: " + indexFile);
-
-		ObjectInputStream reader = new ObjectInputStream(new FileInputStream(indexFile));
-
-		IndexerInvertedDoconly loaded = (IndexerInvertedDoconly) reader.readObject();
-		System.out.println("loaded termLs2 size: " + loaded._termLs2.size());
-
-		this._documents = loaded._documents;
-		this._dictionary = loaded._dictionary;
-		this._termLs = loaded._termLs2;
-		this._numDocs = _documents.size();
-		this._corpusTermFrequency = loaded._corpusTermFrequency;
-		this._documentTermFrequency = loaded._documentTermFrequency;
-		this._termLineNum = loaded._termLineNum;
-		for (Integer freq : loaded._corpusTermFrequency) {
-			this._totalTermFrequency += freq;
-		}
-		System.out.println(Integer.toString(_numDocs) + " documents loaded " +
-				"with " + Long.toString(_totalTermFrequency) + " terms!");
-		reader.close();
-
-		/*
-		    Query query = new Query("Alfred Matthew");
-		    Document doc = nextDoc(query, -1);
-		    System.out.println(doc.getTitle());
-		    doc = nextDoc(query, doc._docid);
-		    System.out.println(doc.getTitle());
-		 */
-	}
-
-	@Override
-	public DocumentIndexed getDoc(int docid) {
-		if(docid < _documents.size()){
-			return _documents.get(docid);
-		}
-		else{
-			return null;
-		}
-	}
 
 	/**
 	 * In HW2, you should be using {@link DocumentIndexed}
@@ -464,29 +281,6 @@ public class IndexerInvertedDoconly extends Indexer2 {
 		}
 	}
 
-	// return a pos such that posLs.get(pos)> docid
-	public int postLsNext(ArrayList<Integer> postLs, int cache, int docid){
-		int last = postLs.size() - 1;
-		if(cache < 0){
-			return -1;
-		}
-		else if(cache > last){
-			return -1;
-		}
-		else if(postLs.get(last) <= docid){
-			return -1;
-		}
-		while(cache < postLs.size() && postLs.get(cache) <= docid){
-			cache++;
-		}
-
-		if(postLs.get(cache) > docid){
-			return cache;
-		}
-		else{
-			return -1;
-		}
-	}
 
 	public ArrayList<Integer> getPostList(String term){
 		if(_postListBuf.size() > _postListBufSize){
@@ -552,19 +346,7 @@ public class IndexerInvertedDoconly extends Indexer2 {
 		return postLs;
 	}
 
-	// number of documents the term occurs in
-	@Override
-	public int corpusDocFrequencyByTerm(String term) {
-		return _dictionary.containsKey(term) ?
-				_documentTermFrequency.get(_dictionary.get(term)) : 0;
-	}
 
-	//number of times a term appears in corpus
-	@Override
-	public int corpusTermFrequency(String term) {
-		return _dictionary.containsKey(term) ?
-				_corpusTermFrequency.get(_dictionary.get(term)) : 0;
-	}
 
 	// number of times a term occurs in document
 	@Override
