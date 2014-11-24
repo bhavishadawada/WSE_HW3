@@ -79,7 +79,7 @@ public class LogMinerNumviews extends LogMiner {
 		String currentLine = null;
 		while((currentLine = br.readLine()) != null){
 			String[] temp = currentLine.split(" ");
-			if((_docList.get(temp[1]) != null) && NumberUtils.isNumber(temp[2])){
+			if(temp.length >= 3 && (_docList.get(temp[1]) != null) && NumberUtils.isNumber(temp[2])){
 				_numViews.put(_docList.get(temp[1]), Integer.parseInt(temp[2]));
 			}
 
