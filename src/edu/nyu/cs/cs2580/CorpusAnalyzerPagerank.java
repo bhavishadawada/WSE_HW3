@@ -145,8 +145,8 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		String file = _options._indexPrefix + "/corpusGraph.txt";
 
 		double docNum = _docList.size();
-		int itrNum = 1; // iteration number, try itrNum = 1 and 2
-		double lambda = 0.1; //try lambda = 0.1 and 0.9
+		int itrNum = 2; // iteration number, try itrNum = 1 and 2
+		double lambda = 0.9; //try lambda = 0.1 and 0.9
 		double[] prev = new double[(int) docNum];
 		double[] next = new double[(int) docNum];
 		System.out.println(1/docNum);
