@@ -116,6 +116,7 @@ public class Utility {
 			e.printStackTrace();
 		}
 		try {
+			stopFilter.reset();
 			stopFilter.end();
 			stopFilter.close();
 		} catch (IOException e) {
@@ -148,6 +149,7 @@ public class Utility {
 				e.printStackTrace();
 			}
 			try {
+				stopFilter.reset();
 				stopFilter.end();
 				stopFilter.close();
 			} catch (IOException e) {
