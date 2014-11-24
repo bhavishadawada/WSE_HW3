@@ -11,6 +11,9 @@ import edu.nyu.cs.cs2580.SearchEngine.Options;
  * document-level features including the PageRank and the NumViews. 
  */
 public class RankerComprehensive extends Ranker {
+	final double betaScore    = 0.8;
+	final double betaNumViews = 0.1;
+	final double betaPageRank = 0.1;
 
   public RankerComprehensive(Options options,
       CgiArguments arguments, Indexer indexer) {
@@ -19,13 +22,9 @@ public class RankerComprehensive extends Ranker {
   }
 
   @Override
-  public Vector<ScoredDocument> runQuery(QueryPhrase query, int numResults) {
-    return null;
+  public ScoredDocument runquery(Query query, Document doc) {
+	ScoredDocument sd = new RankerFavorite(_options, _arguments, _indexer).runquery(query, doc);
+	sd._score = betaScore*sd._score + betaNumViews*sd._doc._numViews + betaPageRank*sd._doc._pageRank;
+	return sd;
   }
-
-@Override
-public ScoredDocument runquery(Query query, Document doc) {
-	// TODO Auto-generated method stub
-	return null;
-}
 }

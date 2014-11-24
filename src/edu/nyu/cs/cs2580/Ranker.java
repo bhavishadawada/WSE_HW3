@@ -7,8 +7,6 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Vector;
 
-import org.apache.commons.collections.map.HashedMap;
-
 import edu.nyu.cs.cs2580.QueryHandler.CgiArguments;
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
