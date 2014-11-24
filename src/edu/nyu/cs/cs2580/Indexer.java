@@ -24,8 +24,7 @@ import edu.nyu.cs.cs2580.SearchEngine.Options;
  * @author congyu
  * @author fdiaz
  */
-public abstract class Indexer  implements Serializable{
-	private static final long serialVersionUID = 3361289105007800861L;
+public abstract class Indexer  {
   // Options to configure each concrete Indexer, do not serialize.
   protected Options _options = null;
 

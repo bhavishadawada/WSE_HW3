@@ -37,7 +37,7 @@ import edu.nyu.cs.cs2580.SearchEngine.Options;
  */
 
 // check if this should implement serializable
-public class IndexerInvertedDoconly extends Indexer implements Serializable{
+public class IndexerInvertedDoconly extends Indexer implements Serializable {
 	private static final long serialVersionUID = 3361289105007800861L;
 
 	final int BULK_DOC_PROCESSING_SIZE = 1000;
@@ -45,6 +45,7 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 	// Data structure to maintain unique terms with id
 	private Map<String, Integer> _dictionary = new HashMap<String, Integer>();
 	
+	ArrayList<String> _termLs2;
 
 	// Data structure to store number of times a term occurs in Document
 	// term id --> frequency
@@ -121,6 +122,7 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 
 		System.out.println("termLs size: " + this._termLs.size());
 		ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(indexFile));
+		this._termLs2 = this._termLs;
 		writer.writeObject(this);
 		writer.close();
 		long endTime = System.nanoTime();
@@ -358,11 +360,11 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 		ObjectInputStream reader = new ObjectInputStream(new FileInputStream(indexFile));
 
 		IndexerInvertedDoconly loaded = (IndexerInvertedDoconly) reader.readObject();
-		System.out.println("loaded termLs size: " + loaded._termLs.size());
+		System.out.println("loaded termLs2 size: " + loaded._termLs2.size());
 
 		this._documents = loaded._documents;
 		this._dictionary = loaded._dictionary;
-		this._termLs = loaded._termLs;
+		this._termLs = loaded._termLs2;
 		this._numDocs = _documents.size();
 		this._corpusTermFrequency = loaded._corpusTermFrequency;
 		this._documentTermFrequency = loaded._documentTermFrequency;
