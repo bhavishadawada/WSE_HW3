@@ -88,27 +88,28 @@ public abstract class Ranker {
 	  Vector<ScoredDocument> results = runQuery(query, numResults);
 	  // do the logic here
 	  
-	  Map<Integer, Integer> frequencyMap = new HashMap<Integer,Integer>();  
+	  Map<String, Integer> frequencyMap = new HashMap<Integer,Integer>();  
 	  for(ScoredDocument scoreddoc : results){
 		  Document doc = scoreddoc.getDocument();
 		  for(int i = 0 ; i < doc.termId.length; i++){
 			  int termId = doc.termId[i];
+			  String term = _indexer._termLs.get(termId);
 			  int termFrequency = doc.termFrequency[i];
 			  if(frequencyMap.containsKey(termId)){
-				  frequencyMap.put(termId, frequencyMap.get(termId) + termFrequency);
+				  frequencyMap.put(term, frequencyMap.get(termId) + termFrequency);
 			  }
 			  else{
-				  frequencyMap.put(termId, termFrequency);
+				  frequencyMap.put(term, termFrequency);
 			  }	  
 		  }  
 	  }
 
 	  // To get the Top m terms from k documents
 	// Convert the hashMap to arrayList for Sorting
-			List<Map.Entry<Integer, Integer>> entries = new ArrayList<Map.Entry<Integer, Integer>>(frequencyMap.entrySet());
-			Collections.sort(entries, new Comparator<Map.Entry<Integer, Integer>>() {
+			List<Map.Entry<String, Integer>> entries = new ArrayList<Map.Entry<String, Integer>>(frequencyMap.entrySet());
+			Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
 				  public int compare(
-				      Map.Entry<Integer, Integer> entry1, Map.Entry<Integer, Integer> entry2) {
+				      Map.Entry<String, Integer> entry1, Map.Entry<String, Integer> entry2) {
 					  if(entry1.getValue() > entry2.getValue()){
 						  return -1;
 					  }
@@ -120,9 +121,12 @@ public abstract class Ranker {
 					  }
 				  }
 				});
-			List<Map.Entry<Integer, Integer>> top_M_TermsList =  entries.subList(0, numTerms);
+
+			List<Map.Entry<String, Integer>> top_M_TermsList =  entries.subList(0, numTerms);
 			
-			// calculate the probability
+			// normalize probability
+			
+			
 			
 	  
   }

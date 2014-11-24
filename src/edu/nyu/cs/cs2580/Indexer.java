@@ -1,6 +1,7 @@
 package edu.nyu.cs.cs2580;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import edu.nyu.cs.cs2580.SearchEngine.Options;
 
@@ -115,6 +116,9 @@ public abstract class Indexer {
    * {@link corpusDocFrequencyByTerm}, {@link corpusTermFrequency}, and
    * {@link documentTermFrequency} must return correct results during serving.
    */
+
+
+	ArrayList<String> _termLs = new ArrayList<String>();
 
   // Number of documents in the corpus.
   public final int numDocs() { return _numDocs; }
