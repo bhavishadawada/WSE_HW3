@@ -19,7 +19,7 @@ public class RankerComprehensive extends Ranker {
   }
 
   @Override
-  public Vector<ScoredDocument> runQuery(Query query, int numResults) {
+  public Vector<ScoredDocument> runQuery(QueryPhrase query, int numResults) {
     return null;
   }
 }

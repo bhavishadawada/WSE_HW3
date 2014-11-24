@@ -203,7 +203,7 @@ class IndexerFullScan extends Indexer implements Serializable {
   }
 
   @Override
-  public Document nextDoc(Query query, int docid) {
+  public Document nextDoc(QueryPhrase query, int docid) {
     SearchEngine.Check(false, "Not implemented!");
     return null;
   }
@@ -235,5 +235,11 @@ class IndexerFullScan extends Indexer implements Serializable {
     }
     return retval;
   }
+
+@Override
+public int documentTotalTermFrequency(int docid) {
+	// TODO Auto-generated method stub
+	return 0;
+}
 
 }

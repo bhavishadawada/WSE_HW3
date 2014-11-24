@@ -31,11 +31,6 @@ public class IndexerInvertedOccurrence extends Indexer {
    * In HW2, you should be using {@link DocumentIndexed}.
    */
   @Override
-  public Document nextDoc(Query query, int docid) {
-    return null;
-  }
-
-  @Override
   public int corpusDocFrequencyByTerm(String term) {
     return 0;
   }
@@ -50,4 +45,16 @@ public class IndexerInvertedOccurrence extends Indexer {
     SearchEngine.Check(false, "Not implemented!");
     return 0;
   }
+
+@Override
+public Document nextDoc(QueryPhrase query, int docid) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public int documentTotalTermFrequency(int docid) {
+	// TODO Auto-generated method stub
+	return 0;
+}
 }

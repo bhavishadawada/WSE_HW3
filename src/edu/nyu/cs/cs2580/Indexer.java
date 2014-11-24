@@ -69,7 +69,7 @@ public abstract class Indexer {
    * @return the next Document after {@code docid} satisfying {@code query} or
    * null if no such document exists.
    */
-  public abstract Document nextDoc(Query query, int docid);
+  public abstract Document nextDoc(QueryPhrase query, int docid);
 
   // APIs for index construction and loading.
 
@@ -131,6 +131,8 @@ public abstract class Indexer {
   // Number of times {@code term} appeared in the document {@code docid}.
   // *** @CS2580: Note the function signature change from url to docid. ***
   public abstract int documentTermFrequency(String term, int docid);
+  
+  public abstract int documentTotalTermFrequency(int docid);
 
   /**
    * All Indexers must be created through this factory class based on the

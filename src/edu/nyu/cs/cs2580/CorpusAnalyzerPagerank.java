@@ -205,6 +205,22 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 	@Override
 	public Object load() throws IOException {
 		System.out.println("Loading using " + this.getClass().getName());
-		return null;
+		String path = _options._indexPrefix + "/pageRank.txt";
+		File file = new File(path);
+		BufferedReader br = new BufferedReader(new FileReader(file));
+
+		String line = br.readLine();
+		int docNum = Integer.parseInt(line);
+
+		double[] pageRankLs = new double[docNum];
+		
+		// read score, line: <docId> <score>
+		while((line = br.readLine()) != null){
+			String[] arr = line.split(" ");
+			int docId = Integer.parseInt(arr[0]);
+			pageRankLs[docId] = Double.parseDouble(arr[1]);
+		}
+		br.close();
+		return pageRankLs;
 	}
 }

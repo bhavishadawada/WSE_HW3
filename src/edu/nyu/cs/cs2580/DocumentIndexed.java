@@ -7,6 +7,8 @@ package edu.nyu.cs.cs2580;
 public class DocumentIndexed extends Document {
   private static final long serialVersionUID = 9184892508124423115L;
 
+  public int _termNum;
+
   public DocumentIndexed(int docid) {
     super(docid);
   }

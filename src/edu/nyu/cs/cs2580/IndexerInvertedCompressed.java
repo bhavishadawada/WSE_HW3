@@ -30,10 +30,6 @@ public class IndexerInvertedCompressed extends Indexer {
   /**
    * In HW2, you should be using {@link DocumentIndexed}
    */
-  @Override
-  public Document nextDoc(Query query, int docid) {
-    return null;
-  }
 
   @Override
   public int corpusDocFrequencyByTerm(String term) {
@@ -52,4 +48,16 @@ public class IndexerInvertedCompressed extends Indexer {
   public int documentTermFrequency(String term, int docid) {
     return 0;
   }
+
+@Override
+public Document nextDoc(QueryPhrase query, int docid) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+@Override
+public int documentTotalTermFrequency(int docid) {
+	// TODO Auto-generated method stub
+	return 0;
+}
 }
