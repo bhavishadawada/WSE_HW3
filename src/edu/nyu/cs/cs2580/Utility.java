@@ -96,7 +96,7 @@ public class Utility {
 	public static List<String> tokenize2(String input) throws IOException {
 		List<String> tempTokens = new ArrayList<String>();
 		Tokenizer tokenizer = new StandardTokenizer(Version.LUCENE_36,
-	            new StringReader("I've got a brand new combine harvester, and I'm giving you the key"));
+	            new StringReader(input));
 
 	    final StandardFilter standardFilter = new StandardFilter(Version.LUCENE_36, tokenizer);
 	    final StopFilter stopFilter = new StopFilter(Version.LUCENE_36, standardFilter, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
