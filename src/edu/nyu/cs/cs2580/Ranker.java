@@ -83,12 +83,12 @@ public abstract class Ranker {
 		return results;
   }
   
-  public void psuedoRelevanceCalc(QueryPhrase query, int numResults , int numTerms){
+  public List<Map.Entry<String, Double>> psuedoRelevanceCalc(QueryPhrase query, int numResults , int numTerms){
 	  
 	  Vector<ScoredDocument> results = runQuery(query, numResults);
 	  // do the logic here
 	  
-	  Map<String, Integer> frequencyMap = new HashMap<Integer,Integer>();  
+	  Map<String, Double> frequencyMap = new HashMap<String,Double>();  
 	  for(ScoredDocument scoreddoc : results){
 		  Document doc = scoreddoc.getDocument();
 		  for(int i = 0 ; i < doc.termId.length; i++){
@@ -99,17 +99,17 @@ public abstract class Ranker {
 				  frequencyMap.put(term, frequencyMap.get(termId) + termFrequency);
 			  }
 			  else{
-				  frequencyMap.put(term, termFrequency);
+				  frequencyMap.put(term, (double) termFrequency);
 			  }	  
 		  }  
 	  }
 
 	  // To get the Top m terms from k documents
 	// Convert the hashMap to arrayList for Sorting
-			List<Map.Entry<String, Integer>> entries = new ArrayList<Map.Entry<String, Integer>>(frequencyMap.entrySet());
-			Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
+			List<Map.Entry<String, Double>> entries = new ArrayList<Map.Entry<String, Double>>(frequencyMap.entrySet());
+			Collections.sort(entries, new Comparator<Map.Entry<String, Double>>() {
 				  public int compare(
-				      Map.Entry<String, Integer> entry1, Map.Entry<String, Integer> entry2) {
+				      Map.Entry<String, Double> entry1, Map.Entry<String, Double> entry2) {
 					  if(entry1.getValue() > entry2.getValue()){
 						  return -1;
 					  }
@@ -122,12 +122,19 @@ public abstract class Ranker {
 				  }
 				});
 
-			List<Map.Entry<String, Integer>> top_M_TermsList =  entries.subList(0, numTerms);
+			List<Map.Entry<String, Double>> top_M_TermsList =  entries.subList(0, numTerms);
 			
 			// normalize probability
+			double sum = 0;
+			for(Map.Entry<String,Double> entry : top_M_TermsList){
+				sum = sum + entry.getValue();
+			}
 			
+			for(Map.Entry<String,Double> entry : top_M_TermsList){
+				entry.setValue(entry.getValue()/ sum);
+			}
 			
-			
+		return top_M_TermsList;	
 	  
   }
   
