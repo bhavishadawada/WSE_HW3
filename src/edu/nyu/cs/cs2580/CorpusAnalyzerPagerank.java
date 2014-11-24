@@ -151,7 +151,7 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		double[] next = new double[(int) docNum];
 		System.out.println(1/docNum);
 		//initialize prev to 1/docNum
-		Arrays.fill(prev, 1/docNum);
+		Arrays.fill(prev, 1);
 
 		for(int itr = 0; itr < itrNum; itr++){
 			BufferedReader br = new BufferedReader(new FileReader(file));
@@ -180,6 +180,7 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 		
 		File rfile = new File(_options._indexPrefix + "/pageRank.txt");
 		rfile.delete();
+		System.out.println("writing rfile");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(rfile, true));
 
 		// Write document number at the first line
@@ -187,7 +188,9 @@ public class CorpusAnalyzerPagerank extends CorpusAnalyzer {
 
 		//write prev to file, it is page rank 
 		for(int i = 0; i < prev.length; i++){
-			bw.write(i + " " + Double.toString(prev[i])+"\n");
+
+			bw.write( i + " " + Double.toString(prev[i]) + "\n");
+
 		}
 		bw.close();
 

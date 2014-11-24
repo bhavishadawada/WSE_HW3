@@ -135,7 +135,7 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 
 		DocumentIndexed doc = new DocumentIndexed(docId);
 		
-		Map<Integer,Integer> termFrequencyMap = new HashMap<Integer,Integer>();
+		Map<String,Integer> termFrequencyMap = new HashMap<String,Integer>();
 		//build _dictionary
 		for(String token:uniqueTermSetBody){
 			if(!_dictionary.containsKey(token)){
@@ -149,26 +149,26 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 		}
 
 		List<String> bodyTermVector = Utility.tokenize2(body);
-		doc.termId = new int[uniqueTermSetBody.size()];
+		doc.term= new String[uniqueTermSetBody.size()];
 		doc.termFrequency = new int[uniqueTermSetBody.size()];
 		for(String token : bodyTermVector){
 			int id = _dictionary.get(token);
 			_corpusTermFrequency.set(id, _corpusTermFrequency.get(id) + 1);
 			
-			if(termFrequencyMap.containsKey(id)){
-				termFrequencyMap.put(id, termFrequencyMap.get(id) + 1);
+			if(termFrequencyMap.containsKey(token)){
+				termFrequencyMap.put(token, termFrequencyMap.get(token) + 1);
 			}
 			else{
-				termFrequencyMap.put(id, 1);
+				termFrequencyMap.put(token, 1);
 			}
 			
 		}
 		
 		// Convert the hashMap to arrayList for Sorting
-		List<Map.Entry<Integer, Integer>> entries = new ArrayList<Map.Entry<Integer, Integer>>(termFrequencyMap.entrySet());
-		Collections.sort(entries, new Comparator<Map.Entry<Integer, Integer>>() {
+		List<Map.Entry<String, Integer>> entries = new ArrayList<Map.Entry<String, Integer>>(termFrequencyMap.entrySet());
+		Collections.sort(entries, new Comparator<Map.Entry<String, Integer>>() {
 			  public int compare(
-			      Map.Entry<Integer, Integer> entry1, Map.Entry<Integer, Integer> entry2) {
+			      Map.Entry<String, Integer> entry1, Map.Entry<String, Integer> entry2) {
 				  if(entry1.getValue() > entry2.getValue()){
 					  return -1;
 				  }
@@ -182,8 +182,8 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 			});
 		
 		int indexNum = 0;
-		for(Entry<Integer,Integer> entry : entries){
-			doc.termId[indexNum] = entry.getKey().intValue();
+		for(Entry<String,Integer> entry : entries){
+			doc.term[indexNum] = entry.getKey();
 			doc.termFrequency[indexNum] = entry.getValue().intValue();
 			indexNum = indexNum + 1;
 		}	

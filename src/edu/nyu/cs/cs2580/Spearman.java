@@ -23,7 +23,6 @@ class Spearman{
 		File file = new File(path);
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String line = br.readLine();
-
 		int docNum = Integer.parseInt(line);
 		
 		// set docId
@@ -71,16 +70,16 @@ class Spearman{
 		return docLs;
 	}
 	
-	static public double cmpDoc(Doc[] doc0, Doc[] doc1) throws Exception{
-		if(doc0.length != doc1.length){
+	static public double cmpDoc(Doc[] pageRank, Doc[] numViews) throws Exception{
+		if(pageRank.length != numViews.length){
 			throw new Exception("cmpDoc Error: compare ranks with different length");
 		}
 		double tho = 0;
 		double w = 0;
-		double z = ((double)doc0.length + 1.0)/2;
-		for(int i = 0; i < doc0.length; i++){
-			tho += (doc0[i].rank - z)*(doc1[i].rank - z);
-			w += Math.pow((doc0[i].rank - z), 2);
+		double z = ((double)pageRank.length + 1.0)/2;
+		for(int i = 0; i < pageRank.length; i++){
+			tho += (pageRank[i].rank - z)*(numViews[i].rank - z);
+			w += Math.pow((pageRank[i].rank - z), 2);
 		}
 		return tho/w;
 	}
