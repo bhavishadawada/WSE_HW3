@@ -37,7 +37,7 @@ import edu.nyu.cs.cs2580.SearchEngine.Options;
  */
 
 // check if this should implement serializable
-public class IndexerInvertedDoconly extends Indexer implements Serializable {
+public class IndexerInvertedDoconly extends Indexer2 {
 	private static final long serialVersionUID = 3361289105007800861L;
 
 	final int BULK_DOC_PROCESSING_SIZE = 1000;
@@ -47,6 +47,7 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable {
 	
 	ArrayList<String> _termLs2;
 
+	/*
 	// Data structure to store number of times a term occurs in Document
 	// term id --> frequency
 	private ArrayList<Integer> _documentTermFrequency = new ArrayList<Integer>();
@@ -62,6 +63,7 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable {
 
 	// Stores all Document in memory.
 	private List<DocumentIndexed> _documents = new ArrayList<DocumentIndexed>();
+	*/
 	private Map<Character, Map<String, List<Integer>>> _characterMap = 
 			new HashMap<Character, Map<String, List<Integer>>>();
 
