@@ -26,7 +26,7 @@ public class Bhattacharyya {
 		File file = new File(path_to_output);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
 		for(QueryEntry entry : resultEntry){
-			String tempString = entry.query_1 + " " + entry.query_1 + " " + entry.coefficient;
+			String tempString = entry.query_1 + " " + entry.query_2 + " " + entry.coefficient;
 			writer.write(tempString + "\n");
 		}
 		
