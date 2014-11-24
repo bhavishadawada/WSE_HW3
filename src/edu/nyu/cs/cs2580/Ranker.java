@@ -1,7 +1,10 @@
 package edu.nyu.cs.cs2580;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -87,8 +90,41 @@ public abstract class Ranker {
 	  
 	  Map<Integer, Integer> frequencyMap = new HashMap<Integer,Integer>();  
 	  for(ScoredDocument scoreddoc : results){
-		  
+		  Document doc = scoreddoc.getDocument();
+		  for(int i = 0 ; i < doc.termId.length; i++){
+			  int termId = doc.termId[i];
+			  int termFrequency = doc.termFrequency[i];
+			  if(frequencyMap.containsKey(termId)){
+				  frequencyMap.put(termId, frequencyMap.get(termId) + termFrequency);
+			  }
+			  else{
+				  frequencyMap.put(termId, termFrequency);
+			  }	  
+		  }  
 	  }
+
+	  // To get the Top m terms from k documents
+	// Convert the hashMap to arrayList for Sorting
+			List<Map.Entry<Integer, Integer>> entries = new ArrayList<Map.Entry<Integer, Integer>>(frequencyMap.entrySet());
+			Collections.sort(entries, new Comparator<Map.Entry<Integer, Integer>>() {
+				  public int compare(
+				      Map.Entry<Integer, Integer> entry1, Map.Entry<Integer, Integer> entry2) {
+					  if(entry1.getValue() > entry2.getValue()){
+						  return -1;
+					  }
+					  else if(entry1.getValue() < entry2.getValue()){
+						  return 1;
+					  }
+					  else{
+						  return 0;
+					  }
+				  }
+				});
+			List<Map.Entry<Integer, Integer>> top_M_TermsList =  entries.subList(0, numTerms);
+			
+			// calculate the probability
+			
+	  
   }
   
   public abstract ScoredDocument runquery(Query query, Document doc);
