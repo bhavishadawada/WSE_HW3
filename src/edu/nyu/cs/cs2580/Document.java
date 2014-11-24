@@ -23,6 +23,8 @@ class Document implements Serializable {
   private String _title = "";
   private String _url = "";
   
+  int[] termId;
+  int[] termFrequency;
   // Basic information for ranking
   float _pageRank = 0.0f;
   int _numViews = 0;

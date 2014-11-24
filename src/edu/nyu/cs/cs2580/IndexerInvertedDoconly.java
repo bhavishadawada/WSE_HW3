@@ -13,6 +13,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -132,7 +134,8 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 		buildMapFromTokens(uniqueTermSetBody,docId);
 
 		DocumentIndexed doc = new DocumentIndexed(docId);
-
+		
+		Map<Integer,Integer> termFrequencyMap = new HashMap<Integer,Integer>();
 		//build _dictionary
 		for(String token:uniqueTermSetBody){
 			if(!_dictionary.containsKey(token)){
@@ -149,7 +152,39 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 		for(String token : bodyTermVector){
 			int id = _dictionary.get(token);
 			_corpusTermFrequency.set(id, _corpusTermFrequency.get(id) + 1);
+			
+			if(termFrequencyMap.containsKey(id)){
+				termFrequencyMap.put(id, termFrequencyMap.get(id) + 1);
+			}
+			else{
+				termFrequencyMap.put(id, 1);
+			}
+			
 		}
+		
+		// Convert the hashMap to arrayList for Sorting
+		List<Map.Entry<Integer, Integer>> entries = new ArrayList<Map.Entry<Integer, Integer>>(termFrequencyMap.entrySet());
+		Collections.sort(entries, new Comparator<Map.Entry<Integer, Integer>>() {
+			  public int compare(
+			      Map.Entry<Integer, Integer> entry1, Map.Entry<Integer, Integer> entry2) {
+				  if(entry1.getValue() > entry2.getValue()){
+					  return -1;
+				  }
+				  else if(entry1.getValue() < entry2.getValue()){
+					  return 1;
+				  }
+				  else{
+					  return 0;
+				  }
+			  }
+			});
+		
+		int indexNum = 0;
+		for(Entry<Integer,Integer> entry : entries){
+			doc.termId[indexNum] = entry.getKey();
+			doc.termFrequency[indexNum] = entry.getValue();
+			indexNum = indexNum + 1;
+		}	
 
 		doc._pageRank = (float)pageRankLs[docId];
 		doc._numViews = numViewLs[docId];
