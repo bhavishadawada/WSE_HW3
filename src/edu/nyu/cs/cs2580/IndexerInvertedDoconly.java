@@ -119,6 +119,7 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 		String indexFile = _options._indexPrefix + "/corpus.idx";
 		System.out.println("Write Indexer to " + indexFile);
 
+		System.out.println("termLs size: " + this._termLs.size());
 		ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(indexFile));
 		writer.writeObject(this);
 		writer.close();
@@ -357,6 +358,7 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 		ObjectInputStream reader = new ObjectInputStream(new FileInputStream(indexFile));
 
 		IndexerInvertedDoconly loaded = (IndexerInvertedDoconly) reader.readObject();
+		System.out.println("loaded termLs size: " + loaded._termLs.size());
 
 		this._documents = loaded._documents;
 		this._dictionary = loaded._dictionary;

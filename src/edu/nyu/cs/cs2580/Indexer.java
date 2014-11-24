@@ -1,6 +1,7 @@
 package edu.nyu.cs.cs2580;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import edu.nyu.cs.cs2580.SearchEngine.Options;
@@ -23,7 +24,8 @@ import edu.nyu.cs.cs2580.SearchEngine.Options;
  * @author congyu
  * @author fdiaz
  */
-public abstract class Indexer {
+public abstract class Indexer  implements Serializable{
+	private static final long serialVersionUID = 3361289105007800861L;
   // Options to configure each concrete Indexer, do not serialize.
   protected Options _options = null;
 
