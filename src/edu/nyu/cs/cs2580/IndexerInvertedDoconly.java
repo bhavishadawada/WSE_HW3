@@ -183,8 +183,6 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 		
 		int indexNum = 0;
 		for(Entry<Integer,Integer> entry : entries){
-			System.out.println(entry.getKey());
-			System.out.println(entry.getValue());
 			doc.termId[indexNum] = entry.getKey().intValue();
 			doc.termFrequency[indexNum] = entry.getValue().intValue();
 			indexNum = indexNum + 1;
