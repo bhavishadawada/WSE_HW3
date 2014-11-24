@@ -2,6 +2,8 @@ package edu.nyu.cs.cs2580;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import com.sun.net.httpserver.Headers;
@@ -53,6 +55,8 @@ class QueryHandler implements HttpHandler {
     }
     public OutputFormat _outputFormat = OutputFormat.TEXT;
 
+    public int _numterms = 0;
+
     public CgiArguments(String uriQuery) {
       String[] params = uriQuery.split("&");
       for (String param : params) {
@@ -82,6 +86,8 @@ class QueryHandler implements HttpHandler {
           } catch (IllegalArgumentException e) {
             // Ignored, search engine should never fail upon invalid user input.
           }
+        } else if(key.equals("numterms")){
+        	_numterms = Integer.parseInt(val);
         }
       }  // End of iterating over params
     }
@@ -104,6 +110,14 @@ class QueryHandler implements HttpHandler {
     OutputStream responseBody = exchange.getResponseBody();
     responseBody.write(message.getBytes());
     responseBody.close();
+  }
+
+  private void constructPrfOutput(
+      final List<Map.Entry<String, Double>> queryEapansion, StringBuffer response) {
+	  for(Map.Entry<String, Double> entry : queryEapansion){
+		  response.append(response.length() > 0 ? "\n" : "");
+		  response.append(entry.getKey() + "\t" + entry.getValue());
+	  }
   }
 
   private void constructTextOutput(
@@ -135,45 +149,53 @@ class QueryHandler implements HttpHandler {
     if (uriPath == null || uriQuery == null) {
       respondWithMsg(exchange, "Something wrong with the URI!");
     }
-    if (!uriPath.equals("/search")) {
-      respondWithMsg(exchange, "Only /search is handled!");
-    }
-    System.out.println("Query: " + uriQuery);
+    else if (uriPath.equals("/prf") || uriPath.equals("/search")) {
+    	System.out.println("Query: " + uriQuery);
 
-    // Process the CGI arguments.
-    CgiArguments cgiArgs = new CgiArguments(uriQuery);
-    if (cgiArgs._query.isEmpty()) {
-      respondWithMsg(exchange, "No query is given!");
-    }
+    	// Process the CGI arguments.
+    	CgiArguments cgiArgs = new CgiArguments(uriQuery);
+    	if (cgiArgs._query.isEmpty()) {
+    	  respondWithMsg(exchange, "No query is given!");
+    	}
 
-    // Create the ranker.
-    Ranker ranker = Ranker.Factory.getRankerByArguments(
-        cgiArgs, SearchEngine.OPTIONS, _indexer);
-    if (ranker == null) {
-      respondWithMsg(exchange,
-          "Ranker " + cgiArgs._rankerType.toString() + " is not valid!");
-    }
+    	// Create the ranker.
+    	Ranker ranker = Ranker.Factory.getRankerByArguments(
+    	    cgiArgs, SearchEngine.OPTIONS, _indexer);
+    	if (ranker == null) {
+    	  respondWithMsg(exchange,
+    	      "Ranker " + cgiArgs._rankerType.toString() + " is not valid!");
+    	}
 
-    // Processing the query.
-    QueryPhrase processedQuery = new QueryPhrase(cgiArgs._query);
-    processedQuery.processQuery();
+    	// Processing the query.
+    	QueryPhrase processedQuery = new QueryPhrase(cgiArgs._query);
+    	processedQuery.processQuery();
 
-    // Ranking.
-    Vector<ScoredDocument> scoredDocs =
-        ranker.runQuery(processedQuery, cgiArgs._numResults);
-    StringBuffer response = new StringBuffer();
-    switch (cgiArgs._outputFormat) {
-    case TEXT:
-      constructTextOutput(scoredDocs, response);
-      break;
-    case HTML:
-      // @CS2580: Plug in your HTML output
-      break;
-    default:
-      // nothing
+    	StringBuffer response = new StringBuffer();
+    	if(uriPath.equals("/prf")){
+    		List<Map.Entry<String, Double>> queryEapansion = ranker.psuedoRelevanceCalc(processedQuery, cgiArgs._numResults, cgiArgs._numterms);
+    		constructPrfOutput(queryEapansion, response);
+    	}
+    	else{
+    		// Ranking.
+    		Vector<ScoredDocument> scoredDocs =
+    		    ranker.runQuery(processedQuery, cgiArgs._numResults);
+    		switch (cgiArgs._outputFormat) {
+    		case TEXT:
+    		  constructTextOutput(scoredDocs, response);
+    		  break;
+    		case HTML:
+    		  // @CS2580: Plug in your HTML output
+    		  break;
+    		default:
+    		  // nothing
+    		}
+    	}
+    	respondWithMsg(exchange, response.toString());
+    	System.out.println("Finished query: " + cgiArgs._query);
     }
-    respondWithMsg(exchange, response.toString());
-    System.out.println("Finished query: " + cgiArgs._query);
+    else{
+      respondWithMsg(exchange, "Only /search and /prf is handled!");
+    }
   }
 }
 
