@@ -13,8 +13,13 @@ import java.util.Vector;
 import java.util.regex.Pattern;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.StopAnalyzer;
+import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.standard.StandardFilter;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
 
@@ -60,7 +65,7 @@ public class Utility {
 	}*/
 	
 	// To make stem words
-		public static List<String> tokenize2(String input){
+		/*public static List<String> tokenize2(String input){
 			List<String> tempTokens = new ArrayList<String>();
 			TokenStream stream = analyze(input);
 			CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
@@ -86,8 +91,29 @@ public class Utility {
 			}
 			
 			return tempTokens;
-		}
+		}*/
 		
+	public static List<String> tokenize2(String input) throws IOException {
+		List<String> tempTokens = new ArrayList<String>();
+		Tokenizer tokenizer = new StandardTokenizer(Version.LUCENE_36,
+	            new StringReader("I've got a brand new combine harvester, and I'm giving you the key"));
+
+	    final StandardFilter standardFilter = new StandardFilter(Version.LUCENE_36, tokenizer);
+	    final StopFilter stopFilter = new StopFilter(Version.LUCENE_36, standardFilter, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+		CharTermAttribute cattr = tokenizer.addAttribute(CharTermAttribute.class);
+		
+		while (stopFilter.incrementToken()) {
+			String stemmedToken = cattr.toString().trim();
+			if (stemmedToken.matches("[a-zA-Z0-9']*")) {
+				stemmedToken = Stemmer.getStemmedWord(stemmedToken
+						.toLowerCase());
+				tempTokens.add(stemmedToken);
+			}
+		}
+		stopFilter.end();
+		stopFilter.close();
+		return tempTokens;
+	}
 		public static Set<String> tokenize(String input){
 			Set<String> tempTokens = new HashSet<String>();
 			TokenStream stream = analyze(input);
