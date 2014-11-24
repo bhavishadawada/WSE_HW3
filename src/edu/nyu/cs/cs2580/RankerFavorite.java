@@ -29,7 +29,7 @@ public class RankerFavorite extends Ranker {
 
     @Override
     public Vector<ScoredDocument> runQuery(QueryPhrase query, int numResults) {
-    	System.out.println("numResults:" + numResults);
+    	System.out.println("numResultssss:" + numResults);
     	Queue<ScoredDocument> rankQueue = new PriorityQueue<ScoredDocument>();
 
 		int docid = -1;
