@@ -44,6 +44,8 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 
 	// Data structure to maintain unique terms with id
 	private Map<String, Integer> _dictionary = new HashMap<String, Integer>();
+	
+	private ArrayList<String> _termLs = new ArrayList<String>();
 
 	// Data structure to store number of times a term occurs in Document
 	// term id --> frequency
@@ -143,6 +145,7 @@ public class IndexerInvertedDoconly extends Indexer implements Serializable{
 				_corpusTermFrequency.add(0);
 				_documentTermFrequency.add(0);
 				_termLineNum.add(0);
+				_termLs.add(token);
 			}
 			int id = _dictionary.get(token);
 			_documentTermFrequency.set(id, _documentTermFrequency.get(id) + 1);
