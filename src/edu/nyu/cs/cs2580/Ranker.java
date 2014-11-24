@@ -1,5 +1,8 @@
 package edu.nyu.cs.cs2580;
 
+import java.util.Collections;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Vector;
 
 import edu.nyu.cs.cs2580.QueryHandler.CgiArguments;
@@ -51,7 +54,37 @@ public abstract class Ranker {
    * @param numResults number of results to return
    * @return Up to {@code numResults} scored documents in ranked order
    */
-  public abstract Vector<ScoredDocument> runQuery(QueryPhrase query, int numResults);
+  public Vector<ScoredDocument> runQuery(QueryPhrase query, int numResults){
+	  Queue<ScoredDocument> rankQueue = new PriorityQueue<ScoredDocument>();
+
+		int docid = -1;
+		Document doc = _indexer.nextDoc(query, docid);
+		while(doc != null){
+			rankQueue.add(runquery(query, doc));
+			if(rankQueue.size() > numResults){
+				rankQueue.poll();
+			}
+			docid = doc._docid;
+			doc = _indexer.nextDoc(query, docid);
+		}
+		
+      Vector<ScoredDocument> results = new Vector<ScoredDocument>();
+      ScoredDocument scoredDoc = null;
+      while ((scoredDoc = rankQueue.poll()) != null) {
+        results.add(scoredDoc);
+      }
+      Collections.sort(results, Collections.reverseOrder());
+      System.out.println("results size:" + results.size());
+		return results;
+  }
+  
+  public void psuedoRelevanceCalc(QueryPhrase query, int numResults , int numTerms){
+	  
+	  Vector<ScoredDocument> results = runQuery(query, numResults);
+	  // do the logic here
+  }
+  
+  public abstract ScoredDocument runquery(Query query, Document doc);
 
   /**
    * All Rankers must be created through this factory class based on the

@@ -22,4 +22,10 @@ public class RankerComprehensive extends Ranker {
   public Vector<ScoredDocument> runQuery(QueryPhrase query, int numResults) {
     return null;
   }
+
+@Override
+public ScoredDocument runquery(Query query, Document doc) {
+	// TODO Auto-generated method stub
+	return null;
+}
 }

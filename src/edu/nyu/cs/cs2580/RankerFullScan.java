@@ -21,19 +21,6 @@ class RankerFullScan extends Ranker {
     System.out.println("Using Ranker: " + this.getClass().getSimpleName());
   }
 
-  @Override
-  public Vector<ScoredDocument> runQuery(QueryPhrase query, int numResults) {    
-    Vector<ScoredDocument> all = new Vector<ScoredDocument>();
-    for (int i = 0; i < _indexer.numDocs(); ++i) {
-      all.add(scoreDocument(query, i));
-    }
-    Collections.sort(all, Collections.reverseOrder());
-    Vector<ScoredDocument> results = new Vector<ScoredDocument>();
-    for (int i = 0; i < all.size() && i < numResults; ++i) {
-      results.add(all.get(i));
-    }
-    return results;
-  }
 
   private ScoredDocument scoreDocument(Query query, int did) {
     // Process the raw query into tokens.
@@ -59,4 +46,11 @@ class RankerFullScan extends Ranker {
     }
     return new ScoredDocument(doc, score);
   }
+
+
+@Override
+public ScoredDocument runquery(Query query, Document doc) {
+	// TODO Auto-generated method stub
+	return null;
+}
 }
