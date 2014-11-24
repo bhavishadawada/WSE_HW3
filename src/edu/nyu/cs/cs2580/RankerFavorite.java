@@ -29,12 +29,10 @@ public class RankerFavorite extends Ranker {
 
     @Override
     public Vector<ScoredDocument> runQuery(QueryPhrase query, int numResults) {
-    	System.out.println("numResultssss:" + numResults);
     	Queue<ScoredDocument> rankQueue = new PriorityQueue<ScoredDocument>();
 
 		int docid = -1;
 		Document doc = _indexer.nextDoc(query, docid);
-    	System.out.println("docid:" + doc._docid);
 		while(doc != null){
 			rankQueue.add(runquery(query, doc));
 			if(rankQueue.size() > numResults){
@@ -42,7 +40,6 @@ public class RankerFavorite extends Ranker {
 			}
 			docid = doc._docid;
 			doc = _indexer.nextDoc(query, docid);
-			System.out.println("docid:" + doc._docid);
 		}
 		
         Vector<ScoredDocument> results = new Vector<ScoredDocument>();
@@ -51,6 +48,7 @@ public class RankerFavorite extends Ranker {
           results.add(scoredDoc);
         }
         Collections.sort(results, Collections.reverseOrder());
+        System.out.println("results size:" + results.size());
 		return results;
     }
     
