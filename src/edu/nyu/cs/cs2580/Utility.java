@@ -93,7 +93,7 @@ public class Utility {
 			return tempTokens;
 		}*/
 		
-	public static List<String> tokenize2(String input) throws IOException {
+	public static List<String> tokenize2(String input) {
 		List<String> tempTokens = new ArrayList<String>();
 		Tokenizer tokenizer = new StandardTokenizer(Version.LUCENE_36,
 	            new StringReader(input));
@@ -102,24 +102,40 @@ public class Utility {
 	    final StopFilter stopFilter = new StopFilter(Version.LUCENE_36, standardFilter, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
 		CharTermAttribute cattr = tokenizer.addAttribute(CharTermAttribute.class);
 		
-		while (stopFilter.incrementToken()) {
-			String stemmedToken = cattr.toString().trim();
-			if (stemmedToken.matches("[a-zA-Z0-9']*")) {
-				stemmedToken = Stemmer.getStemmedWord(stemmedToken
-						.toLowerCase());
-				tempTokens.add(stemmedToken);
+		try {
+			while (stopFilter.incrementToken()) {
+				String stemmedToken = cattr.toString().trim();
+				if (stemmedToken.matches("[a-zA-Z0-9']*")) {
+					stemmedToken = Stemmer.getStemmedWord(stemmedToken
+							.toLowerCase());
+					tempTokens.add(stemmedToken);
+				}
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		stopFilter.end();
-		stopFilter.close();
+		try {
+			stopFilter.end();
+			stopFilter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return tempTokens;
 	}
 		public static Set<String> tokenize(String input){
 			Set<String> tempTokens = new HashSet<String>();
-			TokenStream stream = analyze(input);
-			CharTermAttribute cattr = stream.addAttribute(CharTermAttribute.class);
+			Tokenizer tokenizer = new StandardTokenizer(Version.LUCENE_36,
+		            new StringReader(input));
+
+		    final StandardFilter standardFilter = new StandardFilter(Version.LUCENE_36, tokenizer);
+		    final StopFilter stopFilter = new StopFilter(Version.LUCENE_36, standardFilter, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+			CharTermAttribute cattr = tokenizer.addAttribute(CharTermAttribute.class);
+			
 			try {
-				while (stream.incrementToken()) {
+				while (stopFilter.incrementToken()) {
 					String stemmedToken = cattr.toString().trim();
 					if (stemmedToken.matches("[a-zA-Z0-9']*")) {
 						stemmedToken = Stemmer.getStemmedWord(stemmedToken
@@ -132,8 +148,8 @@ public class Utility {
 				e.printStackTrace();
 			}
 			try {
-				stream.end();
-				stream.close();
+				stopFilter.end();
+				stopFilter.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
