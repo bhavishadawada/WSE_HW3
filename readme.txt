@@ -44,6 +44,8 @@ Spearman 0.4544571521738433
 iteration 2 lambda 0.9
 Spearman 0.4559922663694335
 
+Using Spearman correlation, our experiment shows that PageRank predicts website traffic(NumViews) with somewhat surprising strength. A quick search on the Internet shows that, as reported by Quantcast, monthly page views, visits, and unique visitors are all significantly correlated with Pagerank.
+
 4.1 PRF
 curl "http://localhost:25811/prf?query="yahoo"&ranker=comprehensive&numdocs=10&numterms=5"
 
