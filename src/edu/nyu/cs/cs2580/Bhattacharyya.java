@@ -34,7 +34,7 @@ public class Bhattacharyya {
 			writer.write(tempString + "\n");
 		}
 		
-		
+		writer.close();
 	}
 
 	public static List<QueryEntry> computeCoefficient(File[] fileList) throws IOException{
