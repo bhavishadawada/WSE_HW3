@@ -45,7 +45,7 @@ iteration 2 lambda 0.9
 Spearman 0.4559922663694335
 
 4.1 PRF
-curl "http://localhost:25811/prf?query="yahoo"&ranker=comprehensive&numdocs=10&numterms=5"
+curl "http://localhost:25811/prf?query="yahoo"&ranker=comprehensive&num=10&numterms=5"
 
 4.2 Query Similarity
 
